@@ -71,9 +71,7 @@ session_start();
 
     <main>
 
-       <!-- CAROUSEL -->
-       <?php include 'carousel.php' ?>
-       <!-- CAROUSEL -->
+
 
 
 
@@ -88,50 +86,35 @@ session_start();
                     <!-- SIDE -->
                     <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary"
                         style="width: 100%; height: 100%;">
-                        <a href="/"
+                        <a href="#"
                             class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
                             <svg class="bi pe-none me-2" width="40" height="32">
                                 <use xlink:href="#bootstrap"></use>
                             </svg>
-                            <span class="fs-4">Kategori</span>
+                            <span class="fs-4">Merk</span>
                         </a>
                         <hr>
                         <ul class="nav nav-pills flex-column mb-auto">
-                            <?php 
-                            $kategori = mysqli_query($conn, "SELECT * FROM kategori");
-                            while($row = mysqli_fetch_array($kategori)){
-                            ?>
-                            <li class="nav-item">
-                                <a href="?kat=<?php echo $row['nama']; ?>" class="nav-link link-body-emphasis" aria-current="page">
-                                    <svg class="bi pe-none me-2" width="16" height="16">
-                                        <use xlink:href="#home"></use>
-                                    </svg>
-                                    <?php echo $row['nama']; ?>
-                                </a>
-                            </li>
+                            <?php
+                            $merk = mysqli_query($conn, "SELECT * FROM merk");
+                            while ($row = mysqli_fetch_array($merk)) {
+                                ?>
+                                <li class="nav-item ">
+                                    <a href="?merk=<?php echo $row['nama']; ?>" class="nav-link <?php if (isset($_GET['kat']) && $_GET['kat'] == $row['nama']) {
+                                           echo 'active text-white';
+                                       } ?> link-body-emphasis" aria-current="page">
+                                        <svg class="bi pe-none me-2" width="16" height="16">
+                                            <use xlink:href="#home"></use>
+                                        </svg>
+                                        <?php echo $row['nama']; ?>
+                                    </a>
+                                </li>
                             <?php } ?>
 
-                           
+
                         </ul>
                         <hr>
-                        <div class="dropdown">
-                            <a href="#"
-                                class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="https://github.com/mdo.png" alt="" width="32" height="32"
-                                    class="rounded-circle me-2">
-                                <strong>mdo</strong>
-                            </a>
-                            <ul class="dropdown-menu text-small shadow">
-                                <li><a class="dropdown-item" href="#">New project...</a></li>
-                                <li><a class="dropdown-item" href="#">Settings</a></li>
-                                <li><a class="dropdown-item" href="#">Profile</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="#">Sign out</a></li>
-                            </ul>
-                        </div>
+
                     </div>
                     <!-- SIDE -->
                 </div>
@@ -139,146 +122,87 @@ session_start();
                     <div class="m-3">
                         <!--  LIST PRODUK -->
                         <div class="row">
-                            <!-- ITEM PRODUK -->
-                            <div class="col-3 mb-3">
-                                <div class="card shadow-sm">
-                                    <svg class="bd-placeholder-img card-img-top" width="100%" height="100%"
-                                        xmlns="http://www.w3.org/2000/svg" role="img"
-                                        aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice"
-                                        focusable="false">
-                                        <title>Placeholder</title>
-                                        <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%"
-                                            fill="#eceeef" dy=".3em">Thumbnail</text>
-                                    </svg>
-                                    <div class="card-body">
-                                        <h6>Nama Produk</h6>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam esse unde
-                                            minus. Veniam quaerat culpa architecto eaque ullam vero alias maxime error
-                                            est. A cum architecto iure dolorum autem similique!</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-sm btn-primary">Pesan</button>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary"><i
-                                                        class="bi bi-cart"></i></button>
+
+                            <?php if (isset($_GET['merk'])) {
+
+                                $merk = $_GET['merk'];
+                                $kueri1 = mysqli_query($conn, "SELECT * FROM merk WHERE nama = '$merk'");
+                                $data_kat = mysqli_fetch_array($kueri1);
+                                $id_kat = $data_kat['id_merk'];
+
+                                $kueri = mysqli_query($conn, "SELECT * FROM produk WHERE id_merk = $id_kat");
+                                while ($row = mysqli_fetch_array($kueri)) { ?>
+
+                                    <!-- ITEM PRODUK -->
+                                    <div class="col-3 mb-3">
+                                        <div class="card shadow-sm">
+                                            <img class="bd-placeholder-img card-img-top"
+                                                src="https://fdn.gsmarena.com/imgroot/static/headers/makers/apple-2023-1.jpg"
+                                                alt="<?php echo $row['nama']; ?>" width="100%" height="100%">
+                                            <div class="card-body">
+                                                <h6>
+                                                    <?php echo $row['nama'] ?>
+                                                </h6>
+                                                <p>
+                                                    <?php echo $row['deskripsi'] ?>
+                                                </p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="btn-group">
+                                                        <a href="detail-produk.php?produk=<?php echo $row['id_produk'] ?>"
+                                                            class="btn btn-sm btn-primary">Lihat
+                                                            Produk</a>
+                                                        <!--  <button type="button" class="btn btn-sm btn-outline-secondary"><i
+                                                                                                    class="bi bi-cart"></i></button> -->
+                                                    </div>
+                                                    <!-- <small class="text-body-secondary">9 mins</small> -->
+                                                </div>
                                             </div>
-                                            <small class="text-body-secondary">9 mins</small>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <!-- ITEM PRODUK -->
-                            <!-- ITEM PRODUK -->
-                            <div class="col-3 mb-3">
-                                <div class="card shadow-sm">
-                                    <svg class="bd-placeholder-img card-img-top" width="100%" height="100%"
-                                        xmlns="http://www.w3.org/2000/svg" role="img"
-                                        aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice"
-                                        focusable="false">
-                                        <title>Placeholder</title>
-                                        <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%"
-                                            fill="#eceeef" dy=".3em">Thumbnail</text>
-                                    </svg>
-                                    <div class="card-body">
-                                        <h6>Nama Produk</h6>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam esse unde
-                                            minus. Veniam quaerat culpa architecto eaque ullam vero alias maxime error
-                                            est. A cum architecto iure dolorum autem similique!</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-sm btn-primary">Pesan</button>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary"><i
-                                                        class="bi bi-cart"></i></button>
+                                    <!-- ITEM PRODUK -->
+
+                                <?php }
+                                ?>
+
+
+                            <?php } else {
+
+                                $kueri = mysqli_query($conn, "SELECT * FROM produk LIMIT 50");
+                                while ($row = mysqli_fetch_array($kueri)) { ?>
+
+
+                                    <!-- ITEM PRODUK -->
+                                    <div class="col-3 mb-3">
+                                        <div class="card shadow-sm">
+                                            <img class="bd-placeholder-img card-img-top"
+                                                src="https://fdn.gsmarena.com/imgroot/static/headers/makers/apple-2023-1.jpg"
+                                                alt="<?php echo $row['nama']; ?>" width="100%" height="100%">
+                                            <div class="card-body">
+                                                <h6>
+                                                    <?php echo $row['nama'] ?>
+                                                </h6>
+                                                <p>
+                                                    <?php echo $row['deskripsi'] ?>
+                                                </p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="btn-group">
+                                                        <a href="detail-produk.php?produk=<?php echo $row['id_produk'] ?>"
+                                                            class="btn btn-sm btn-primary">Lihat Produk</a>
+                                                        <!--  <button type="button" class="btn btn-sm btn-outline-secondary"><i
+                                                                class="bi bi-cart"></i></button> -->
+                                                    </div>
+                                                    <!-- <small class="text-body-secondary">9 mins</small> -->
+                                                </div>
                                             </div>
-                                            <small class="text-body-secondary">9 mins</small>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <!-- ITEM PRODUK -->
-                            <!-- ITEM PRODUK -->
-                            <div class="col-3 mb-3">
-                                <div class="card shadow-sm">
-                                    <svg class="bd-placeholder-img card-img-top" width="100%" height="100%"
-                                        xmlns="http://www.w3.org/2000/svg" role="img"
-                                        aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice"
-                                        focusable="false">
-                                        <title>Placeholder</title>
-                                        <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%"
-                                            fill="#eceeef" dy=".3em">Thumbnail</text>
-                                    </svg>
-                                    <div class="card-body">
-                                        <h6>Nama Produk</h6>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam esse unde
-                                            minus. Veniam quaerat culpa architecto eaque ullam vero alias maxime error
-                                            est. A cum architecto iure dolorum autem similique!</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-sm btn-primary">Pesan</button>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary"><i
-                                                        class="bi bi-cart"></i></button>
-                                            </div>
-                                            <small class="text-body-secondary">9 mins</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- ITEM PRODUK -->
-                            <!-- ITEM PRODUK -->
-                            <div class="col-3 mb-3">
-                                <div class="card shadow-sm">
-                                    <svg class="bd-placeholder-img card-img-top" width="100%" height="100%"
-                                        xmlns="http://www.w3.org/2000/svg" role="img"
-                                        aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice"
-                                        focusable="false">
-                                        <title>Placeholder</title>
-                                        <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%"
-                                            fill="#eceeef" dy=".3em">Thumbnail</text>
-                                    </svg>
-                                    <div class="card-body">
-                                        <h6>Nama Produk</h6>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam esse unde
-                                            minus. Veniam quaerat culpa architecto eaque ullam vero alias maxime error
-                                            est. A cum architecto iure dolorum autem similique!</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-sm btn-primary">Pesan</button>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary"><i
-                                                        class="bi bi-cart"></i></button>
-                                            </div>
-                                            <small class="text-body-secondary">9 mins</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- ITEM PRODUK -->
-                            <!-- ITEM PRODUK -->
-                            <div class="col-3 mb-3">
-                                <div class="card shadow-sm">
-                                    <svg class="bd-placeholder-img card-img-top" width="100%" height="100%"
-                                        xmlns="http://www.w3.org/2000/svg" role="img"
-                                        aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice"
-                                        focusable="false">
-                                        <title>Placeholder</title>
-                                        <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%"
-                                            fill="#eceeef" dy=".3em">Thumbnail</text>
-                                    </svg>
-                                    <div class="card-body">
-                                        <h6>Nama Produk</h6>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam esse unde
-                                            minus. Veniam quaerat culpa architecto eaque ullam vero alias maxime error
-                                            est. A cum architecto iure dolorum autem similique!</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-sm btn-primary">Pesan</button>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary"><i
-                                                        class="bi bi-cart"></i></button>
-                                            </div>
-                                            <small class="text-body-secondary">9 mins</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- ITEM PRODUK -->
+                                    <!-- ITEM PRODUK -->
+
+                                <?php }
+                            } ?>
+
+
+
                         </div>
                         <!--  LIST PRODUK -->
                     </div>
