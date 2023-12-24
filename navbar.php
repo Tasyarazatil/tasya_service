@@ -1,6 +1,8 @@
 <header data-bs-theme="dark">
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
+            <img src="images/logo.jpg" style="width: 50px; height:50px; mix-blend-mode: normal;" class="rounded me-3"
+                alt="">
             <a class="navbar-brand" href="#">SERVICE</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,6 +22,11 @@
                         } ?>" href="index.php?x=service">Service & Shop</a>
                     </li>
                     <li class="nav-item ">
+                        <a class="nav-link <?php if (isset($_GET['x']) && $_GET['x'] == 'pesanan') {
+                            echo 'active';
+                        } ?>" href="index.php?x=pesanan">Pesanan</a>
+                    </li>
+                    <li class="nav-item ">
                         <a class="nav-link <?php if (isset($_GET['x']) && $_GET['x'] == 'review') {
                             echo 'active';
                         } ?>" href="index.php?x=review">Reviews</a>
@@ -29,7 +36,7 @@
                 </ul>
             </div>
             <?php if (isset($_SESSION['username'])) { ?>
-                <a href="#" class="btn btn-primary btn-sm me-2"><i class="bi bi-person"></i> Lihat Profil</a>
+                <a href="profil.php" class="btn btn-primary btn-sm me-2"><i class="bi bi-person"></i> Lihat Profil</a>
                 <span class="text-white me-3">
                     <?php echo $_SESSION['username'] ?>
                 </span>

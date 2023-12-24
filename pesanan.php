@@ -1,16 +1,65 @@
+<?php
+session_start();
+include 'proses/koneksi.php'; ?>
+
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Pemesanan</title>
     <link href="css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
 </head>
 
 <body>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function batalkan(id) {
+            Swal.fire({
+                title: "Batalkan Pesanan ?",
+                showCancelButton: true,
+                confirmButtonText: "Batalkan",
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    window.location.href = `proses/batalkan.php?id=${id}`;
+                }
+            });
+        }
+    </script>
+
+
+    <?php if (isset($_GET['status']) && $_GET['status'] == 'dibatalkan') { ?>
+        <script>
+            Swal.fire({
+                title: "Dibatalkan",
+                text: "Pesanan dibatalkan",
+                icon: "success"
+            }).then((result) => {
+                window.location.href = 'pesanan.php?x=pesanan';
+            });
+        </script>
+    <?php } ?>
+
+
+    <?php if (!isset($_SESSION['iduser'])) { ?>
+        <script>
+            Swal.fire({
+                title: "Gagal",
+                text: "Login Untuk Melanjutkan ! ",
+                icon: "warning"
+            }).then((result) => {
+                window.location.href = 'login.php';
+            });
+        </script>
+    <?php } ?>
+
+
+
     <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
         <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button"
             aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (light)">
@@ -61,35 +110,7 @@
 
 
     <!-- NAVBAR -->
-    <header data-bs-theme="dark">
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">SERVICE</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0  ">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="index.html">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="service.html">Service & Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="review.html">Reviews</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Profil</a>
-                        </li>
-
-                    </ul>
-                </div>
-                <a href="login.html" class="btn btn-primary"><i class="bi-box-arrow-right"></i> Login</a>
-            </div>
-        </nav>
-    </header>
+    <?php include 'navbar.php'; ?>
     <!-- NAVBAR -->
     <br>
     <br>
@@ -97,146 +118,66 @@
 
     <main>
 
+        <h3 class="m-3">Pesanan Anda</h3>
+
         <div class="mx-2">
             <div class="row">
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
+
+                <?php
+                if (isset($_SESSION['iduser'])) {
+                    $iduser = $_SESSION['iduser'];
+                    $kueri = mysqli_query($conn, "SELECT * FROM pemesanan_komponen WHERE id_user = $iduser AND status NOT LIKE '%dibatalkan%'");
+                    while ($row = mysqli_fetch_array($kueri)) {
+                        ?>
+                        <!-- ITEM -->
+                        <div class="col-6 mb-2">
+                            <div class="card">
+                                <div class="row p-3">
+                                    <div class="col">
+                                        <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
+                                    </div>
+                                    <div class="col-8">
+                                        <h6>
+                                            Komponen :
+                                            <?php echo $row['komponen'] ?>
+                                        </h6>
+                                        <p>
+                                            Produk :
+                                            <?php echo $row['produk'] ?>
+                                        </p>
+                                        <p>
+                                            Penjelasan Kerusakan :
+                                            <?php echo $row['kerusakan'] ?>
+                                        </p>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                Harga :
+                                                <?php echo $row['harga'] ?>
+                                                <br>
+                                                Total :
+                                                <?php echo $row['total'] ?>
+                                            </div>
+                                            <div class="col-6">
+                                                Jumlah :
+                                                <?php echo $row['jumlah'] ?>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <h6 class="bg-primary text-light rounded p-1 m-2">
+                                                <?php echo $row['status'] ?>
+                                            </h6>
+                                            <a href="#" onclick="batalkan(<?php echo $row['id_pesanan'] ?>)"
+                                                class="btn btn-danger">Batalkan</a>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
-
                         </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
+                        <!-- ITEM -->
+                    <?php }
+                } ?>
 
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
             </div>
         </div>
 
@@ -244,6 +185,7 @@
 
 
     </main>
+
 
 
 

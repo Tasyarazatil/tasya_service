@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Review</title>
     <link href="css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
@@ -15,6 +15,21 @@
 </head>
 
 <body>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php
+    if (isset($_GET['status']) && $_GET['status'] == 'berhasil') { ?>
+        <script>
+            Swal.fire({
+                title: "Terkirim",
+                text: "Review anda berhasil dikirim",
+                icon: "success"
+            }).then((result) => {
+                window.location.href = 'review.php';
+            });
+        </script>
+    <?php }
+    ?>
 
 
 

@@ -1,10 +1,15 @@
+<?php
+include 'proses/koneksi.php';
+session_start();
+?>
+
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Pemesanan</title>
     <link href="css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
@@ -61,186 +66,169 @@
 
 
     <!-- NAVBAR -->
-    <header data-bs-theme="dark">
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">SERVICE</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0  ">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="index.html">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="service.html">Service & Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="review.html">Reviews</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Profil</a>
-                        </li>
-
-                    </ul>
-                </div>
-                <a href="login.html" class="btn btn-primary"><i class="bi-box-arrow-right"></i> Login</a>
-            </div>
-        </nav>
-    </header>
+    <?php include 'navbar.php'; ?>
     <!-- NAVBAR -->
-    <br>
-    <br>
-    <br>
+
+    <br><br>
 
     <main>
 
-        <div class="mx-2">
-            <div class="row">
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
+        <div class="m-3">
+            <!-- PEMESANAN -->
+            <div class="container">
+                <main>
+                    <br>
+                    <br>
+                    <div class="row g-5">
+
+                        <?php
+                        $id = $_GET['id_komponen'];
+                        $kueri = mysqli_query($conn, "SELECT * FROM komponen WHERE id_komponen = $id");
+                        $row = mysqli_fetch_array($kueri);
+
+                        $idproduk = $row['id_produk'];
+                        $kueri2 = mysqli_query($conn, "SELECT * FROM produk WHERE id_produk = $idproduk");
+                        $row2 = mysqli_fetch_array($kueri2);
+
+                        ?>
+
+                        <div class="col-12">
+                            <h4 class="mb-3">Pemesanan</h4>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href="#" class="card-link">
+                                        <div class="card mb-3">
+                                            <div class="row g-0">
+                                                <div class="col-4 col-md-4">
+                                                    <img class="card-img"
+                                                        style="width: 100%; height: 100%; object-fit: cover;"
+                                                        src="images/<?php echo $row2['gambar'] ?>" alt="Card image">
+                                                </div>
+                                                <div class="col-8 col-md-8">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">
+                                                            <?php echo $row2['nama'] ?>
+                                                        </h5>
+                                                        <p>
+                                                            <?php echo $row2['deskripsi'] ?>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
+
+                                <div class="col-6">
+                                    <form class="needs-validation" action="proses/pesan_komponen.php" method="GET"
+                                        novalidate="">
+                                        <input type="hidden" name="idproduk" value="<?php echo $row2['id_produk'] ?>">
+                                        <input type="hidden" name="idkomponen"
+                                            value="<?php echo $row['id_komponen'] ?>">
+                                        <div class="row g-3">
+                                            <div class="col-sm-12">
+                                                <label for="produk" class="form-label">Produk</label>
+                                                <input type="text" class="form-control" id="produk" name="produk"
+                                                    placeholder="" value="<?php echo $row2['nama'] ?>" readonly
+                                                    required="">
+                                                <div class="invalid-feedback">
+                                                    Valid first name is required.
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="lastName" class="form-label">Komponen</label>
+                                                <input type="text" class="form-control" id="lastName" name="komponen"
+                                                    placeholder="" value="<?php echo $row['nama'] ?>" readonly
+                                                    required="">
+                                                <div class="invalid-feedback">
+                                                    Valid last name is required.
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <label for="username" class="form-label">Harga</label>
+                                                <div class="input-group has-validation">
+
+                                                    <input type="number" class="form-control"
+                                                        value="<?php echo $row['harga'] ?>" id="harga" name="harga"
+                                                        readonly placeholder="Harga" required="">
+                                                    <div class="invalid-feedback">
+                                                        Your username is required.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <script>
+                                                function incrementQuantity() {
+                                                    var quantityInput = document.getElementById('quantityInput');
+                                                    var total = document.getElementById('total');
+                                                    var harga = document.getElementById('harga');
+                                                    var currentValue = parseInt(quantityInput.value);
+                                                    if (currentValue < parseInt(quantityInput.max)) {
+                                                        quantityInput.value = currentValue + 1;
+                                                        total.value = parseInt(quantityInput.value) * parseInt(harga.value);
+                                                    }
+                                                }
+
+                                                function decrementQuantity() {
+                                                    var quantityInput = document.getElementById('quantityInput');
+                                                    var total = document.getElementById('total');
+                                                    var harga = document.getElementById('harga');
+                                                    var currentValue = parseInt(quantityInput.value);
+                                                    if (currentValue > parseInt(quantityInput.min)) {
+                                                        quantityInput.value = currentValue - 1;
+                                                        total.value = parseInt(quantityInput.value) * parseInt(harga.value);
+                                                    }
+                                                }
+                                            </script>
+
+                                            <div class="col-6">
+                                                <label for="quantityInput" class="form-label">Quantity</label>
+                                                <div class="input-group">
+                                                    <a class="btn btn-primary" onclick="decrementQuantity()">-</a>
+                                                    <input type="number" id="quantityInput" name="qty"
+                                                        class="form-control" value="1" min="1" max="10">
+                                                    <a class="btn btn-primary" onclick="incrementQuantity()">+</a>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <label for="jumlah" class="form-label">Total Harga</label>
+                                                <input type="number" min="" readonly value="<?php echo $row['harga'] ?>"
+                                                    class="form-control" id="total" name="total" placeholder="Jumlah">
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label for="jumlah" class="form-label">Atas Nama</label>
+                                                <input type="text" min="" readonly
+                                                    value="<?php echo $_SESSION['nama'] ?>" name="atasnama"
+                                                    class="form-control" id="total" placeholder="Jumlah">
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label for="kerusakan" class="form-label">Penjelasan kerusakan</label>
+                                                <textarea class="form-control" name="kerusakan" id="kerusakan" cols="2"
+                                                    rows="5"></textarea>
+                                            </div>
+
+                                            <button class="w-100 btn btn-primary btn-lg" type="submit">Pesan
+                                                Sekarang</button>
+                                    </form>
+                                </div>
+
                             </div>
 
                         </div>
                     </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
+                </main>
 
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
+                <br><br>
 
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
-                <!-- ITEM -->
-                <div class="col-6 mb-2">
-                    <div class="card">
-                        <div class="row p-3">
-                            <div class="col">
-                                <img src="images/22342345.jpg" class="rounded" width="150" height="150" alt="">
-                            </div>
-                            <div class="col-8">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure soluta ullam suscipit
-                                    possimus
-                                    ab tempore inventore molestias. Cupiditate, tempore ea reprehenderit nostrum tenetur
-                                    harum
-                                    vitae sit veniam voluptatum quod nam.</p>
-                                <div class="d-flex justify-content-between">
-                                    <h6>Menunggu</h6>
-                                    <a href="#" class="btn btn-danger">Batalkan</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- ITEM -->
             </div>
+            <!-- PEMESANAN -->
         </div>
-
-        <br>
 
 
     </main>

@@ -9,7 +9,7 @@ session_start();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Detail Produk</title>
     <link href="css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
@@ -139,7 +139,9 @@ session_start();
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="btn-group">
                                                     <a href="pemesanan.php?id_komponen=<?php echo $row['id_produk'] ?>"
-                                                        class="btn btn-sm btn-primary">Pesan</a>
+                                                        class="btn btn-sm btn-primary <?php if (!isset($_SESSION['iduser'])) {
+                                                            echo 'disabled';
+                                                        } ?>">Pesan</a>
                                                     <!--    <button id="addcart" type="button"
                                                         class="btn btn-sm btn-outline-info"><i
                                                             class="bi bi-cart"></i></button> -->
